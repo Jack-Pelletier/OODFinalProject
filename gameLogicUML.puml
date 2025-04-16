@@ -1,0 +1,12 @@
+@startuml atm sequence
+
+actor User1 as u1
+actor User2 as u2
+participant Server as s
+
+s --> u1: Send request to log in 
+s --> u2: Send request to log in
+u1 --> s: Enter user
+u2 --> s: Enter user
+
+@enduml
