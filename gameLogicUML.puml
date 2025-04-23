@@ -8,5 +8,20 @@ s --> u1: Send request to log in
 s --> u2: Send request to log in
 u1 --> s: Enter user
 u2 --> s: Enter user
+s --> u1: Auth user, log user in
+s --> u2: Auth user, log user in
+
+
+alt User 1 wins
+u1 --> s: Takes turn
+u2 --> s: Takes turn 
+
+alt User 1 has 3 in a row
+    s --> u1: Winner!
+end
+
+alt User 2 has 3 in a row  
+    s --> u2: Winner!
+end
 
 @enduml
