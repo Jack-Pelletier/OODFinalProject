@@ -24,4 +24,7 @@ alt User 2 has 3 in a row
     s --> u2: Winner!
 end
 
+s --> u1: Game over, logging user out
+s --> u2: Game over, logging user out
+
 @enduml
