@@ -2,14 +2,16 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class TicTacClientEnd extends Frame implements ActionListener{
 
+    private int moveCount = 0;
     private JDialog loginDialog;
     private JTextField tfP1Score, tfP2Score;
-    private JButton tileButtonA1, tileButtonA2, tileButtonA3, tileButtonB1, tileButtonB2, tileButtonB3, tileButtonC1, tileButtonC2, tileButtonC3, exitButton, playAgainButton;
+    private JButton  exitButton, playAgainButton;
     private TextArea resultMessage;
     
     //definitions for awt elements 
@@ -19,9 +21,8 @@ public class TicTacClientEnd extends Frame implements ActionListener{
 
 
     public TicTacClientEnd() {
-        setTitle("Secure Chat Client");
+        setTitle("Multiplayer Tic Tac Toe");
         setSize(500, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //also send a message to close the other window 
         setLayout(new BorderLayout());
 
@@ -40,15 +41,7 @@ public class TicTacClientEnd extends Frame implements ActionListener{
         playAgainButton = new JButton("Play Again");
         exitButton = new JButton("Exit");
 
-        tileButtonA1.addActionListener(this);
-        tileButtonA2.addActionListener(this);
-        tileButtonA3.addActionListener(this);
-        tileButtonB1.addActionListener(this);
-        tileButtonB2.addActionListener(this);
-        tileButtonB3.addActionListener(this);
-        tileButtonC1.addActionListener(this);
-        tileButtonC2.addActionListener(this);
-        tileButtonC3.addActionListener(this);
+        
         exitButton.addActionListener(this);
         playAgainButton.addActionListener(this);
 
@@ -61,34 +54,45 @@ public class TicTacClientEnd extends Frame implements ActionListener{
         resultDialog.setVisible(true);
     }
 
-    private void createGameWindow() {
+    public void createGameWindow() {
         
         //chat window elements 
+        JFrame frame = new JFrame("Tic Tac Toe Board");
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 3));
 
-        send = new JButton("Send");
-        clearChat = new JButton("Clear Chat");
-        logOut = new JButton("Log Out");
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                final JButton button = new JButton();
+                button.setName(i + "" + j);
+                button.setText("");
+                button.setFont(new Font("Arial", Font.BOLD, 40));
+                button.setFocusPainted(false);
+                button.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        send.addActionListener(this);
-        clearChat.addActionListener(this);
-        logOut.addActionListener(this);
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (button.getText().equals("")) {
+                            if (moveCount % 2 == 0) {
+                                button.setText("X");
+                            } else {
+                                button.setText("O");
+                            }
+                            moveCount++;
+                        }
+                    }
+                });
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+                panel.add(button);
+            }
+        }
 
-        JPanel inputPanel = new JPanel(new BorderLayout());
-        inputPanel.add(tfChatbox, BorderLayout.CENTER);
-        inputPanel.add(send, BorderLayout.EAST);
-        panel.add(inputPanel, BorderLayout.SOUTH);
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(clearChat);
-        buttonPanel.add(logOut);
-
-        add(panel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        setVisible(true);
+        frame.add(panel);
+        frame.setSize(400, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+        
     }
     //method for connecting to server 
     private void connectToServer() {
@@ -128,32 +132,30 @@ public class TicTacClientEnd extends Frame implements ActionListener{
     }
     //method for signing up  
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == tilePressed) { // possible use of switch case to prevent bloated code 
+        if (e.getSource() == ) { // possible use of switch case to prevent bloated code 
             String uname = tfUser.getText().trim();
             String pwd = tfPassword.getText();
             //login logic for for logging in 
-            if (uname.isEmpty() || pwd.isEmpty()) {
-                errorMessage.setText("Error, please fill in all fields");
-            } else if (!pwd.matches(passwordPattern)) {
-                errorMessage.setText("Password must be at least 6 alphanumeric characters.");
-            } else if (userExists(uname)) {
-                errorMessage.setText("Username already exists.");
-            } else {
-                if (registerUser(uname, pwd)) {
-                    errorMessage.setText("Sign up successful. You can now log in.");
-                } else {
-                    errorMessage.setText("Error storing sign-up info.");
+           // if (uname.isEmpty() || pwd.isEmpty()) {
+              //  errorMessage.setText("Error, please fill in all fields");
+           // } else if (!pwd.matches(passwordPattern)) {
+              //  errorMessage.setText("Password must be at least 6 alphanumeric characters.");
+           // } else if (userExists(uname)) {
+             //   errorMessage.setText("Username already exists.");
+          //  } else {
+                //if (registerUser(uname, pwd)) {
+                  //  errorMessage.setText("Sign up successful. You can now log in.");
+               // } else {
+                 //   errorMessage.setText("Error storing sign-up info.");
                 }
             }
         }   
         //login button logic 
         if (e.getSource() == exitButton) {
-            String uname = tfUser.getText().trim();
-            String pwd = tfPassword.getText();
 
             if (uname.isEmpty() || pwd.isEmpty()) {
-                errorMessage.setText("Error, please fill in all fields");
-            } else if (validateLogin(uname, pwd)) {
+               //
+            } else if () { //
                 username = uname;
                 loginDialog.setVisible(false);
                 createChatWindow();
@@ -182,9 +184,9 @@ public class TicTacClientEnd extends Frame implements ActionListener{
             }
             System.exit(0);
         }
-    }
-    //method for registering as a user 
-    // private boolean registerUser(String username, String password) {
+    
+    //method for sending a turn 
+    private boolean sendTurn(String button) {
     //     try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true))) {
     //         writer.write(username + ":" + password);
     //         writer.newLine();
@@ -192,22 +194,8 @@ public class TicTacClientEnd extends Frame implements ActionListener{
     //     } catch (IOException e) {
     //         return false;
     //     }
-    // }
-    //boolean for checking if user already has registered 
-    // private boolean userExists(String username) {
-    //     try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
-    //         String line;
-    //         while ((line = reader.readLine()) != null) {
-    //             String[] parts = line.split(":");
-    //             if (parts.length > 0 && parts[0].equalsIgnoreCase(username)) {
-    //                 return true;
-    //             }
-    //         }
-    //     } catch (IOException e) {
-    //         // file might not exist yet
-    //     }
-    //     return false;
-    // }
+    }
+    
     //validates logic 
     // private boolean validateLogin(String username, String password) {
     //     try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
@@ -227,6 +215,6 @@ public class TicTacClientEnd extends Frame implements ActionListener{
     public static void main(String[] args) {
         new TicTacClientEnd();
     }
-        }
+}    
     
     
