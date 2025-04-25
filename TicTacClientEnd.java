@@ -7,11 +7,11 @@ import javax.swing.*;
 
 public class TicTacClientEnd extends Frame implements ActionListener{
 
-       private JDialog loginDialog;
-    //private JTextField ;
+    private JDialog loginDialog;
+    private JTextField tfP1Score, tfP2Score;
     private JButton tileButtonA1, tileButtonA2, tileButtonA3, tileButtonB1, tileButtonB2, tileButtonB3, tileButtonC1, tileButtonC2, tileButtonC3, exitButton, playAgainButton;
-    //private TextArea errorMessage;
-    //private JTextArea chatArea;
+    private TextArea resultMessage;
+    
     //definitions for awt elements 
     private Socket socket;
     private BufferedReader input;
@@ -28,19 +28,17 @@ public class TicTacClientEnd extends Frame implements ActionListener{
         createGameResultDialog(); //awt components 
     }
 //method for login window 
-    private void createGameResultDialog() {
-        loginDialog = new JDialog(this, "Login", true);
-        loginDialog.setSize(300, 250);
-        loginDialog.setLayout(new GridLayout(5, 2));
+    private void createGameResultDialog() { //needs boolean toggle that only turns true once winning pattern is found 
+        resultDialog = new JDialog(this, "Game Results", true); 
+        resultDialog.setSize(300, 250);
+        resultDialog.setLayout(new GridLayout(5, 2));
 
-        JLabel lblUser = new JLabel("Username:");
-        JLabel lblPassword = new JLabel("Password:");
        
-        //errorMessage = new TextArea();
-        //errorMessage.setEditable(false);
+        resultMessage = new TextArea();
+        resultMessage.setEditable(false);
 
-        //signUp = new JButton("Sign Up");
-        //login = new JButton("Login");
+        playAgainButton = new JButton("Play Again");
+        exitButton = new JButton("Exit");
 
         tileButtonA1.addActionListener(this);
         tileButtonA2.addActionListener(this);
@@ -56,22 +54,17 @@ public class TicTacClientEnd extends Frame implements ActionListener{
 
 
         //additions for elements 
-        //loginDialog.add(lblUser);
-        //loginDialog.add(tfUser);
-        //loginDialog.add(lblPassword);
-        //loginDialog.add(tfPassword);
-        //loginDialog.add(signUp);
-        //loginDialog.add(login);
-        loginDialog.add(errorMessage);
+        resultDialog.add(exitButton);
+        resultDialog.add(playAgainButton);
+        resultDialog.add(resultMessage);
 
-        loginDialog.setVisible(true);
+        resultDialog.setVisible(true);
     }
 
     private void createGameWindow() {
-        chatArea = new JTextArea();
-        chatArea.setEditable(false);
+        
         //chat window elements 
-        tfChatbox = new JTextField();
+
         send = new JButton("Send");
         clearChat = new JButton("Clear Chat");
         logOut = new JButton("Log Out");
@@ -100,7 +93,7 @@ public class TicTacClientEnd extends Frame implements ActionListener{
     //method for connecting to server 
     private void connectToServer() {
         try {
-            String serverAddress = "localhost";
+            String serverAddress = "localhost"; // will change to whoevers ip server is run on 
             int port = 6000;
 
             socket = new Socket(serverAddress, port);
@@ -135,7 +128,7 @@ public class TicTacClientEnd extends Frame implements ActionListener{
     }
     //method for signing up  
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == signUp) {
+        if (e.getSource() == tilePressed) { // possible use of switch case to prevent bloated code 
             String uname = tfUser.getText().trim();
             String pwd = tfPassword.getText();
             //login logic for for logging in 
@@ -154,7 +147,7 @@ public class TicTacClientEnd extends Frame implements ActionListener{
             }
         }   
         //login button logic 
-        if (e.getSource() == login) {
+        if (e.getSource() == exitButton) {
             String uname = tfUser.getText().trim();
             String pwd = tfPassword.getText();
 
@@ -169,19 +162,17 @@ public class TicTacClientEnd extends Frame implements ActionListener{
                 errorMessage.setText("Invalid username or password.");
             }
         }
-        //method for sending a chat message 
-        if (e.getSource() == send) {
-            String message = tfChatbox.getText();
-            if (!message.isEmpty()) {
-                String encryptedMessage = EncryptUtil.encrypt(message);
-                output.println(encryptedMessage);
-                tfChatbox.setText("");
+        //method for resetting the game board 
+        if (e.getSource() == playAgainButton) {
+          //set score board to zero - its gonna be text fields being changed to null or something 
+            if () {//button(array) value is not zero change it back to zero
+               //reset buttons to zero 
             }
-        }   //method for clearing chat 
+        } 
 
-        if (e.getSource() == clearChat) {
-            chatArea.setText("");
-        }
+        // if (e.getSource() == clearChat) {
+        //     chatArea.setText("");
+        // }
         //mmethod for logging out 
         if (e.getSource() == logOut) {
             try {
@@ -193,48 +184,48 @@ public class TicTacClientEnd extends Frame implements ActionListener{
         }
     }
     //method for registering as a user 
-    private boolean registerUser(String username, String password) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true))) {
-            writer.write(username + ":" + password);
-            writer.newLine();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+    // private boolean registerUser(String username, String password) {
+    //     try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true))) {
+    //         writer.write(username + ":" + password);
+    //         writer.newLine();
+    //         return true;
+    //     } catch (IOException e) {
+    //         return false;
+    //     }
+    // }
     //boolean for checking if user already has registered 
-    private boolean userExists(String username) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length > 0 && parts[0].equalsIgnoreCase(username)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            // file might not exist yet
-        }
-        return false;
-    }
+    // private boolean userExists(String username) {
+    //     try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
+    //         String line;
+    //         while ((line = reader.readLine()) != null) {
+    //             String[] parts = line.split(":");
+    //             if (parts.length > 0 && parts[0].equalsIgnoreCase(username)) {
+    //                 return true;
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         // file might not exist yet
+    //     }
+    //     return false;
+    // }
     //validates logic 
-    private boolean validateLogin(String username, String password) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length == 2 && parts[0].equalsIgnoreCase(username) && parts[1].equals(password)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            errorMessage.setText("Error reading user file.\n");
-        }
-        return false;
-    }
+    // private boolean validateLogin(String username, String password) {
+    //     try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
+    //         String line;
+    //         while ((line = reader.readLine()) != null) {
+    //             String[] parts = line.split(":");
+    //             if (parts.length == 2 && parts[0].equalsIgnoreCase(username) && parts[1].equals(password)) {
+    //                 return true;
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         errorMessage.setText("Error reading user file.\n");
+    //     }
+    //     return false;
+    // }
     //main method for running chat 
     public static void main(String[] args) {
-        new TicTacClientServer();
+        new TicTacClientEnd();
     }
         }
     
