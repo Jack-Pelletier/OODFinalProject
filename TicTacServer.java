@@ -6,7 +6,14 @@ import java.util.concurrent.*;
 public class TicTacServer {
     private static final int PORT = 5000;
     private static final Set<ClientHandler> clients = ConcurrentHashMap.newKeySet();
+    private static final TurnActions turnManager = new TurnActions();
+    private boolean isPlayer1;
 
+    ClientHandler(Socket socket) {
+        this.socket = socket;
+        this.isPlayer1 = clients.size() == 0; // FIRST client becomes player 1
+    }
+    
     public static void main(String[] args) {
         System.out.println("Tic Tac Toe Server started on port " + PORT);
 
@@ -23,8 +30,13 @@ public class TicTacServer {
     }
 
     static void broadcast(String message, ClientHandler sender) {
+        for (ClientHandler client : clients) {
+            if (client != sender) {
+                client.sendMessage(message);
+            }
+        }
     }
-
+    
     static class ClientHandler implements Runnable {
         private Socket socket;
         private BufferedReader reader;
@@ -42,11 +54,16 @@ public class TicTacServer {
 
         public void run() {
             try {
-                String joinmessage;
-                while ((joinmessage = reader.readLine()) != null) {
-                    ;
-                    System.out.println(joinmessage);
-                    broadcast(joinmessage, this);
+                while (true) {
+                    if (isPlayer1()) {  
+                        String move = reader.readLine();
+                        if (move == null) break;
+                        turnManager.player1action(Integer.parseInt(move));
+                        broadcast("Player 1 moved: " + move, this);
+                    } else {
+                        int move = turnManager.player2action();
+                        sendMessage("Player 2 moved: " + move);
+                    }
                 }
             } catch (Exception e) {
                 System.err.println("Client disconnected.");
@@ -54,10 +71,10 @@ public class TicTacServer {
                 try {
                     clients.remove(this);
                     socket.close();
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
             }
         }
+        
 
         void sendMessage(String message) {
             try {
@@ -69,4 +86,6 @@ public class TicTacServer {
         }
 
     }
+    
 }
+// Font f = new Font("serif", Font.PLAIN, fontSize);
