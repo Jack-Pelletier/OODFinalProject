@@ -1,4 +1,4 @@
-public class gameLogic {
+public class GameLogic {
     private String[][] board = new String[3][3];
     private int p1Score = 0;
     private int p2Score = 0;
@@ -7,7 +7,7 @@ public class gameLogic {
     private boolean player1Turn = true;
 
     // Constructor
-    public gameLogic() {
+    public GameLogic() {
         resetBoard();
     }
 
