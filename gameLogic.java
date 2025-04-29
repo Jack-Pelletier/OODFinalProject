@@ -6,10 +6,16 @@ public class GameLogic {
     private int p2Score = 0;
     private int tieScore = 0;
 
+
+    // game logic constructor 
     public GameLogic() {
         board = new String[3][3];
     }
 
+
+    // method to make a move during a player's turn
+    // params: row (int), col (int)
+    // returns a boolean value indicating if turn was successful or not
     public boolean makeMove(int row, int col) {
         if (board[row][col] == null) {
             board[row][col] = player1Turn ? "X" : "O";
@@ -19,10 +25,18 @@ public class GameLogic {
         return false;
     }
 
+
+    // method to check a given cell
+    // params: row (int), col(int)
+    // returns a string either empty or the value in the given cell
     public String getCell(int row, int col) {
         return board[row][col] == null ? "" : board[row][col];
     }
 
+
+    // method to determine current game status
+    // no params
+    // returns X if player 1 won, O if player 2 won, tie if tie, null if game is still in progress
     public String checkWinner() {
         // Rows and columns
         for (int i = 0; i < 3; i++) {
@@ -43,10 +57,16 @@ public class GameLogic {
         return full ? "Tie" : null;
     }
 
+    // helper method to check whether three given strings are equal and not null
+    // params: a (string), b(string), c (string)
+    // returns a boolean value to indicate whether three strings are equal or not
     private boolean same(String a, String b, String c) {
         return a != null && a.equals(b) && b.equals(c);
     }
 
+    // method to update the score for each possible game outcome
+    // params: winner (string)
+    // no return
     public void updateScore(String winner) {
         switch (winner) {
             case "X":
@@ -61,11 +81,18 @@ public class GameLogic {
         }
     }
 
+
+    // method to reset the board after the end of each round
+    // no params
+    // no return
     public void resetBoard() {
         board = new String[3][3];
         player1Turn = true;
     }
 
+    // method to increment round number for start of new round
+    // no params
+    // no return 
     public void nextRound() {
         round++;
         resetBoard();

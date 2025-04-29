@@ -116,11 +116,16 @@ public class Gui extends JFrame {
         p2Label.setText("P2: " + gameLogic.getP2Score());
     }
 
+    // method to toggle turn label to show whose turn it is
+    // no params
+    // no return
     private void toggleTurnLabel() {
         turnLabel.setText("Turn: Player " + (gameLogic.isPlayer1Turn() ? "1 (X)" : "2 (O)"));
     }
 
-
+    // method to reset the board after each round
+    // no params
+    // no return
     private void resetBoard() {
         gameLogic.resetBoard(); // reset game logic
 
