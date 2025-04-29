@@ -1,4 +1,4 @@
-@startuml atm sequence
+@startuml Game Logic Sequence
 
 actor User1 as u1
 actor User2 as u2
@@ -12,7 +12,6 @@ s --> u1: Auth user, log user in
 s --> u2: Auth user, log user in
 
 
-alt User 1 wins
 u1 --> s: Takes turn
 u2 --> s: Takes turn 
 
@@ -24,7 +23,11 @@ alt User 2 has 3 in a row
     s --> u2: Winner!
 end
 
-s --> u1: Game over, logging user out
-s --> u2: Game over, logging user out
+alt Board is full and no one has 3 in a row 
+    s --> u1: Tie!
+    s --> u2: Tie!
+end
+
+s --> u1: New round begins, User 1 takes first turn
 
 @enduml
