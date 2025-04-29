@@ -9,10 +9,7 @@ public class TicTacServer {
     private static final TurnActions turnManager = new TurnActions();
     private boolean isPlayer1;
 
-    ClientHandler(Socket socket) {
-        this.socket = socket;
-        this.isPlayer1 = clients.size() == 0; // FIRST client becomes player 1
-    }
+    
     
     public static void main(String[] args) {
         System.out.println("Tic Tac Toe Server started on port " + PORT);
@@ -44,6 +41,7 @@ public class TicTacServer {
 
         ClientHandler(Socket socket) {
             this.socket = socket;
+            this.isPlayer1 = clients.size() == 0; // FIRST client becomes player 1
             try {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
