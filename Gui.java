@@ -145,25 +145,47 @@ public class Gui extends JFrame {
     private void buttonClicked(int row, int col) {
         if (gameLogic.makeMove(row, col)) {
             buttons[row][col].setText(gameLogic.getCell(row, col));
-
+    
             String winner = gameLogic.checkWinner();
             if (winner != null) {
                 gameLogic.updateScore(winner);
-                JOptionPane.showMessageDialog(this,
-                        winner.equals("Tie") ? "It's a tie!" :
-                        "Player " + (winner.equals("X") ? player1Name : player2Name) + " wins!",
-                        "Game Over",
-                        JOptionPane.INFORMATION_MESSAGE);
-
+    
+                // Create message for result
+                String message;
+                if (winner.equals("Tie")) {
+                    message = "Round " + gameLogic.getRound() + " Result: It's a tie!";
+                } else {
+                    String winnerName = winner.equals("X") ? player1Name : player2Name;
+                    message = "Round " + gameLogic.getRound() + " Result: " + winnerName + " wins!";
+                }
+    
+                // Show dialog with "Next Round" and "Exit" options
+                int option = JOptionPane.showOptionDialog(
+                    this,
+                    message + "\nWould you like to play the next round or exit?",
+                    "Game Over",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Next Round", "Exit Game"},
+                    "Next Round"
+                );
+    
+                if (option == JOptionPane.NO_OPTION) {
+                    System.exit(0);
+                }
+    
                 updateScoreLabels();
                 gameLogic.nextRound();
                 updateRoundLabel();
                 resetBoardUI();
+                turnLabel.setText("Turn: " + player1Name + " (X)");
             } else {
                 turnLabel.setText("Turn: " + (gameLogic.isPlayer1Turn() ? player1Name + " (X)" : player2Name + " (O)"));
             }
         }
     }
+    
 
     // method to reset button text for new round
     private void resetBoardUI() {
