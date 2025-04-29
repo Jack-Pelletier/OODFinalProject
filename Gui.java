@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
-    private boolean player1Turn = true;
     private GameLogic gameLogic;
 
     private JLabel roundLabel;
@@ -74,7 +73,6 @@ public class Gui extends JFrame {
         add(tieLabel);
         add(p2Label);
 
-
         turnLabel = new JLabel("Turn: Player 1 (X)");
         turnLabel.setFont(new Font("Arial", Font.BOLD, 16));
         turnLabel.setBounds(10, 420, 300, 30);
@@ -93,6 +91,7 @@ public class Gui extends JFrame {
                 updateUI();
                 showGameResult(winner);
                 gameLogic.nextRound();
+                resetBoard(); // clear board after round ends
             } else {
                 updateUI();
                 toggleTurnLabel();
@@ -119,6 +118,19 @@ public class Gui extends JFrame {
 
     private void toggleTurnLabel() {
         turnLabel.setText("Turn: Player " + (gameLogic.isPlayer1Turn() ? "1 (X)" : "2 (O)"));
+    }
+
+
+    private void resetBoard() {
+        gameLogic.resetBoard(); // reset game logic
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                buttons[i][j].setText(""); // clear button text
+            }
+        }
+
+        turnLabel.setText("Turn: Player 1 (X)");
     }
 
     public static void main(String[] args) {
