@@ -6,12 +6,10 @@ public class GameLogic {
     private int p2Score = 0;
     private int tieScore = 0;
 
-
     // game logic constructor 
     public GameLogic() {
         board = new String[3][3];
     }
-
 
     // method to make a move during a player's turn
     // params: row (int), col (int)
@@ -25,14 +23,12 @@ public class GameLogic {
         return false;
     }
 
-
     // method to check a given cell
     // params: row (int), col(int)
     // returns a string either empty or the value in the given cell
     public String getCell(int row, int col) {
         return board[row][col] == null ? "" : board[row][col];
     }
-
 
     // method to determine current game status
     // no params
@@ -80,7 +76,6 @@ public class GameLogic {
                 break;
         }
     }
-
 
     // method to reset the board after the end of each round
     // no params

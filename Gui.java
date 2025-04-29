@@ -17,14 +17,14 @@ public class Gui extends JFrame {
     private String player1Name;
     private String player2Name;
 
-    // Constructor for login screen
+    // main GUI constructor
     public Gui() {
-        // Setup login window first
         setTitle("Login - Tic Tac Toe");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
+        // labels and input fields for player login
         JLabel p1LoginLabel = new JLabel("Player 1 Username:");
         p1LoginLabel.setBounds(50, 50, 150, 30);
         add(p1LoginLabel);
@@ -41,10 +41,12 @@ public class Gui extends JFrame {
         player2Field.setBounds(200, 100, 150, 30);
         add(player2Field);
 
+        // button to start the game
         JButton startButton = new JButton("Start Game");
         startButton.setBounds(125, 180, 150, 40);
         add(startButton);
 
+        // listener for start button
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String p1 = player1Field.getText().trim();
@@ -63,26 +65,27 @@ public class Gui extends JFrame {
         setVisible(true);
     }
 
-    // Validation method
+    // method to validate player usernames with regex
     private boolean validateUsername(String username) {
         return username.matches("^(?=.*[A-Z])[A-Za-z0-9]{1,12}$");
     }
 
-    // Setup Tic Tac Toe board after login
+    // method to set up the game board GUI
     private void setupGameBoard() {
-        // Clear the window
         getContentPane().removeAll();
         repaint();
         setTitle("Tic Tac Toe - " + player1Name + " vs " + player2Name);
         setSize(650, 500);
         setLayout(null);
 
+        gameLogic = new GameLogic();
+
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(3, 3));
         boardPanel.setBounds(10, 10, 400, 400);
         add(boardPanel);
 
-        // Create board buttons
+        // create 3x3 board buttons
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j] = new JButton();
@@ -101,7 +104,7 @@ public class Gui extends JFrame {
             }
         }
 
-        // Right side panel labels
+        // round and score labels
         roundLabel = new JLabel("Round: 1");
         roundLabel.setFont(new Font("Arial", Font.BOLD, 18));
         roundLabel.setBounds(430, 10, 200, 30);
@@ -128,6 +131,7 @@ public class Gui extends JFrame {
         add(tieLabel);
         add(p2Label);
 
+        // label to show which player's turn it is
         turnLabel = new JLabel("Turn: " + player1Name + " (X)");
         turnLabel.setFont(new Font("Arial", Font.BOLD, 16));
         turnLabel.setBounds(10, 420, 300, 30);
@@ -137,20 +141,54 @@ public class Gui extends JFrame {
         repaint();
     }
 
-    // Handle button clicks
+    // method called when a board button is clicked
     private void buttonClicked(int row, int col) {
-        if (buttons[row][col].getText().equals("")) {
-            if (player1Turn) {
-                buttons[row][col].setText("X");
-                turnLabel.setText("Turn: " + player2Name + " (O)");
+        if (gameLogic.makeMove(row, col)) {
+            buttons[row][col].setText(gameLogic.getCell(row, col));
+
+            String winner = gameLogic.checkWinner();
+            if (winner != null) {
+                gameLogic.updateScore(winner);
+                JOptionPane.showMessageDialog(this,
+                        winner.equals("Tie") ? "It's a tie!" :
+                        "Player " + (winner.equals("X") ? player1Name : player2Name) + " wins!",
+                        "Game Over",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                updateScoreLabels();
+                gameLogic.nextRound();
+                updateRoundLabel();
+                resetBoardUI();
             } else {
-                buttons[row][col].setText("O");
-                turnLabel.setText("Turn: " + player1Name + " (X)");
+                turnLabel.setText("Turn: " + (gameLogic.isPlayer1Turn() ? player1Name + " (X)" : player2Name + " (O)"));
             }
-            player1Turn = !player1Turn;
         }
     }
 
+    // method to reset button text for new round
+    private void resetBoardUI() {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                buttons[i][j].setText("");
+    }
+
+    // method to update scores on the GUI
+    // no params
+    // no return
+    private void updateScoreLabels() {
+        p1Label.setText(player1Name + ": " + gameLogic.getP1Score());
+        p2Label.setText(player2Name + ": " + gameLogic.getP2Score());
+        tieLabel.setText("Tie: " + gameLogic.getTieScore());
+    }
+
+    // method to update round label
+    // no params
+    // no return
+    private void updateRoundLabel() {
+        roundLabel.setText("Round: " + gameLogic.getRound());
+    }
+
+    // main method 
     public static void main(String[] args) {
         new Gui();
     }
