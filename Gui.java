@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
-    private boolean player1Turn = true;
+    private GameLogic gameLogic;
 
     private JLabel roundLabel;
     private JLabel scoreLabel;
