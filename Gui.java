@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
     private JButton[][] buttons = new JButton[3][3];
-    private GameLogic gameLogic;
+    private gameLogic gameLogic;
 
     private JLabel roundLabel;
     private JLabel scoreLabel;
@@ -20,7 +20,7 @@ public class Gui extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
-        gameLogic = new GameLogic(); // initialize game logic
+        gameLogic = new gameLogic(); // initialize game logic
 
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(3, 3));

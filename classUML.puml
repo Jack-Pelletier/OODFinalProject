@@ -1,0 +1,40 @@
+@startuml
+
+class gameLogic {
+
+    - String[][] board
+    - boolean player1Turn
+    - int round
+    - int p1Score
+    - int p2Score
+    - int tieScore
+
+
+    + gameLogic()
+
+    + boolean makeMove(int row, int col)
+
+    + String getCell(int row, int col)
+
+    + String checkWinner()
+
+    - boolean same(String a, String b, String c)
+
+    + void updateScore(String winner)
+
+    + void resetBoard()
+
+    + void nextRound()
+
+    + int getRound()
+    + int getP1Score()
+    + int getP2Score()
+    + int getTieScore()
+    + boolean isPlayer1Turn()
+}
+
+
+@enduml
+
+
+
