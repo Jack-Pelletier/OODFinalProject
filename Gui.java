@@ -106,9 +106,22 @@ public class Gui extends JFrame {
         } else {
             message += "Player " + (winner.equals("X") ? "1" : "2") + " wins!";
         }
-        JOptionPane.showMessageDialog(this, message);
-    }
+        int option = JOptionPane.showOptionDialog(
+            this,
+            message + "\nWould you like to play the next round or exit?",
+            "Game Result",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            new String[]{"Next Round", "Exit Game"},
+            "Next Round"
+        );
 
+        if (option == JOptionPane.NO_OPTION) {
+            System.exit(0); // exit the program
+        }
+    }
+    
     private void updateUI() {
         roundLabel.setText("Round: " + gameLogic.getRound());
         p1Label.setText("P1: " + gameLogic.getP1Score());
