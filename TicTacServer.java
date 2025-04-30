@@ -56,7 +56,11 @@ public class TicTacServer {
                     if (isPlayer1()) {  
                         String move = reader.readLine();
                         if (move == null) break;
-                        turnManager.player1action(Integer.parseInt(move));
+                        System.out.println("Received move: " + move);  // For debug
+                        String[] parts = move.split(",");
+                        int row = Integer.parseInt(parts[0]);
+                        int col = Integer.parseInt(parts[1]);   // Use row and col to do server-side validation or game logic
+                        turnManager.player1action(row * 3 + col);
                         broadcast("Player 1 moved: " + move, this);
                     } else {
                         int move = turnManager.player2action();
