@@ -8,11 +8,11 @@ public class TicTacServer {
     private static final int PORT = 5000; // Server will listen on port 5000
     private static final Set<ClientHandler> clients = ConcurrentHashMap.newKeySet(); // Thread-safe set of connected clients
     private static final TurnActions turnManager = new TurnActions(); // Handles player turns
-    private static GameLogic gameLogic; // Game logic for maintaining board state
+    private static gameLogic gameLogic; // Game logic for maintaining board state
 
     public static void main(String[] args) {
         System.out.println("Tic Tac Toe Server started on port " + PORT);
-        gameLogic = new GameLogic(); // Initialize game logic
+        gameLogic = new gameLogic(); // Initialize game logic
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {

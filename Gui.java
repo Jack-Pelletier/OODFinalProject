@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
     JButton[][] buttons = new JButton[3][3];
-    private GameLogic gameLogic;
+    private gameLogic gameLogic;
 
     private JLabel roundLabel;
     private JLabel scoreLabel;
@@ -82,7 +82,7 @@ public class Gui extends JFrame {
         setSize(650, 500);
         setLayout(null);
 
-        gameLogic = new GameLogic();
+        gameLogic = new gameLogic();
 
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(3, 3));
