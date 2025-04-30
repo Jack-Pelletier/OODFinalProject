@@ -14,15 +14,15 @@ public class TicTacClientEnd{
 
 
 
-    public TicTacClientEnd(){
+    public TicTacClientEnd(){ //runs client end, connecting  to server and starting threads 
         gui = new Gui();
         connectToServer();
         startListening();
     }
 
-        public static void main(String[] args) {
+        public static void main(String[] args) { // main :D 
             new TicTacClientEnd();
-        }
+        } 
     
     //method for connecting to server 
     private void connectToServer() {
@@ -30,7 +30,7 @@ public class TicTacClientEnd{
        try{
         String serverAddress = "localhost";
         int port = 5000;
-
+        //socket for connecting to server 
         socket = new Socket(serverAddress, port);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
@@ -46,12 +46,12 @@ public class TicTacClientEnd{
     //method for sending a turn 
     private boolean sendGameData(String button) { //boolean for thread based turns 
         if(socket != null && output != null){
-            output.println(buttonIndex);
+            output.println(buttonIndex); //idk how to get the button data and send it 
             return true;
         } else{
             return false;
         }
-    }
+    } //thread to listen to server for connection 
     private void startListening() {
         Thread thread = new Thread(() -> {
             try{
