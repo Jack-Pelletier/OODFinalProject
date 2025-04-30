@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Gui extends JFrame {
-    private JButton[][] buttons = new JButton[3][3];
-    private gameLogic gameLogic;
+    JButton[][] buttons = new JButton[3][3];
+    private GameLogic gameLogic;
 
     private JLabel roundLabel;
     private JLabel scoreLabel;
@@ -65,6 +65,10 @@ public class Gui extends JFrame {
         setVisible(true);
     }
 
+    public Gui(TicTacClientEnd ticTacClientEnd) {
+        //TODO Auto-generated constructor stub
+    }
+
     // method to validate player usernames with regex
     private boolean validateUsername(String username) {
         return username.matches("^(?=.*[A-Z])[A-Za-z0-9]{1,12}$");
@@ -78,7 +82,7 @@ public class Gui extends JFrame {
         setSize(650, 500);
         setLayout(null);
 
-        gameLogic = new gameLogic();
+        gameLogic = new GameLogic();
 
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(3, 3));

@@ -7,43 +7,59 @@ public class TicTacServer {
     private static final int PORT = 5000;
     private static final Set<ClientHandler> clients = ConcurrentHashMap.newKeySet();
     private static final TurnActions turnManager = new TurnActions();
-    private static final GameLogic GameLogic = new GameLogic();
-
-
+    private static GameLogic gameLogic;
+    
     public static void main(String[] args) {
         System.out.println("Tic Tac Toe Server started on port " + PORT);
+        gameLogic = new GameLogic();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                ClientHandler handler = new ClientHandler(clientSocket);
+                boolean isPlayer1 = clients.size() == 0;
+                ClientHandler handler = new ClientHandler(clientSocket, isPlayer1);
                 clients.add(handler);
                 new Thread(handler).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-   
-        }
-    
+    }
 
     static class TurnActions {
-        private int data;
         private boolean turn = false;
     
-        public synchronized void player1action(int value) throws InterruptedException {
-            while (turn) wait(); // Wait until turn changes
-            data = value;
-            turn = true;
-            notify(); // Notify of turn change
+        public synchronized String[][] player1action(int i, int j) throws InterruptedException {
+            while (turn) wait(); // Not Player 1's turn
+            if (gameLogic.board[i][j].equals(" ")) {
+                gameLogic.board[i][j] = "X";
+                turn = true;
+                notifyAll();
+            }
+            return gameLogic.board;
         }
     
-        public synchronized int player2action() throws InterruptedException {
-            while (!turn) wait(); // Wait until turn changes
-            turn = false;
-            return data;
+        public synchronized String[][] player2action(int i, int j) throws InterruptedException {
+            while (!turn) wait(); // Not Player 2's turn
+            if (gameLogic.board[i][j].equals(" ")) {
+                gameLogic.board[i][j] = "O";
+                turn = false;
+                notifyAll();
+            }
+            return gameLogic.board;
+        }
+
+        public synchronized String getBoardString() {
+            StringBuilder sb = new StringBuilder();
+            for (String[] row : gameLogic.board) {
+                sb.append(String.join(",", row)).append(";");
+            }
+            return sb.toString();
         }
     }
+    
+    
+    
 
     static void broadcast(String message, ClientHandler sender) {
         for (ClientHandler client : clients) {
@@ -57,41 +73,52 @@ public class TicTacServer {
         private Socket socket;
         private BufferedReader reader;
         private BufferedWriter writer;
-        private boolean isPlayer1;
+        private final boolean isPlayer1;
 
-        ClientHandler(Socket socket) {
-            this.socket = socket;
-            this.isPlayer1 = clients.size() == 0; // FIRST client becomes player 1
-            try {
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            } catch (IOException e) {
-                System.err.println("Error setting up I/O for a client.");
-            }
-        }
+    ClientHandler(Socket socket, boolean isPlayer1) {
+        this.socket = socket;
+        this.isPlayer1 = isPlayer1;
+        try {
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        sendMessage("You are " + (isPlayer1 ? "Player 1 (X)" : "Player 2 (O)"));
+        } catch (IOException e) {
+        System.err.println("Error setting up I/O for a client.");
+    }
+}
 
-        public void run() {
-            try {
-                while (true) {
-                    if (isPlayer1) {  
-                        String move = reader.readLine();
-                        if (move == null) break;
-                        turnManager.player1action(Integer.parseInt(move));
-                        broadcast("Player 1 moved: " + move, this);
-                    } else {
-                        int move = turnManager.player2action();
-                        sendMessage("Player 2 moved: " + move);
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Client disconnected.");
-            } finally {
-                try {
-                    clients.remove(this);
-                    socket.close();
-                } catch (IOException ignored) {}
+
+public void run() {
+    try {
+        while (true) {
+            String move = reader.readLine();
+            if (move == null) break;
+
+            String[] parts = move.split(",");
+            int row = Integer.parseInt(parts[0]);
+            int col = Integer.parseInt(parts[1]);
+
+            if (isPlayer1) {
+                turnManager.player1action(row, col);
+                broadcast("Player 1 moved: " + move, this);
+            } else {
+                turnManager.player2action(row, col);
+                broadcast("Player 2 moved: " + move, this);
             }
+
+            String boardState = turnManager.getBoardString();
+            broadcast("Board: " + boardState, null);
         }
+    } catch (Exception e) {
+        System.err.println("Client disconnected.");
+    } finally {
+        try {
+            clients.remove(this);
+            socket.close();
+        } catch (IOException ignored) {}
+    }
+}
+
         
 
         void sendMessage(String message) {
@@ -104,6 +131,5 @@ public class TicTacServer {
         }
 
     }
-}    
 
-// Font f = new Font("serif", Font.PLAIN, fontSize);
+}

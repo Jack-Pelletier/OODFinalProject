@@ -10,12 +10,13 @@ public class TicTacClientEnd{
     private BufferedReader input;
     private PrintWriter output;
     private String username;
-    private Gui gui;
-
+    public Gui gui;
+    
+    //public board = String[][] = ;
 
 
     public TicTacClientEnd(){ //runs client end, connecting  to server and starting threads 
-        gui = new Gui();
+        gui = new Gui(this);  // Pass `this` to the GUI
         connectToServer();
         startListening();
     }
@@ -44,14 +45,15 @@ public class TicTacClientEnd{
        }}
 
     //method for sending a turn 
-    private boolean sendGameData(String button) { //boolean for thread based turns 
-        if(socket != null && output != null){
-            output.println(buttonIndex); //idk how to get the button data and send it 
+    private boolean sendGameData(int i, int j) {
+        if (socket != null && output != null) {
+            output.println(i + "," + j);  // Send as "row,col"
             return true;
-        } else{
+        } else {
             return false;
         }
-    } //thread to listen to server for connection 
+    }
+     //thread to listen to server for connection 
     private void startListening() {
         Thread thread = new Thread(() -> {
             try{

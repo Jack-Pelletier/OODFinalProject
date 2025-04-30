@@ -1,5 +1,5 @@
-public class gameLogic {
-    private String[][] board;
+public class GameLogic {
+    public String[][] board;
     private boolean player1Turn = true;
     private int round = 1;
     private int p1Score = 0;
@@ -7,7 +7,7 @@ public class gameLogic {
     private int tieScore = 0;
 
     // game logic constructor 
-    public gameLogic() {
+    public GameLogic() {
         board = new String[3][3];
     }
 
