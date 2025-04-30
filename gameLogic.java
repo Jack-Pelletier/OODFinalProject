@@ -1,5 +1,5 @@
 public class GameLogic {
-    private String[][] board;
+    public String[][] board;
     private boolean player1Turn = true;
     private int round = 1;
     private int p1Score = 0;
